@@ -29,7 +29,12 @@ provider:
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+ iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "ses:*"
+    Resources:
+      - "*"
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
@@ -57,7 +62,16 @@ provider:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 
-# functions:
+# Functions
+functions:
+  dailyReminder:
+    handler: handler.sendReminderDaily
+    events:
+      - schedule: rate(1 day)
+  weekendReminder:
+    handler: handler.sendReminderWeekend
+    events:
+      - schedule: cron(30 22 ? * SUN,SAT *)
 #   hello:
 #     handler: handler.hello
 #    The following are a few example events you can configure
