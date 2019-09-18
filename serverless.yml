@@ -33,7 +33,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "ses:*"
-      Resources:
+      Resource:
         - "*"
 #    - Effect: "Allow"
 #      Action:
