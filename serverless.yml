@@ -30,11 +30,11 @@ provider:
 
 # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
-  - Effect: "Allow"
-    Action:
-      - "ses:*"
-    Resources:
-      - "*"
+    - Effect: "Allow"
+      Action:
+        - "ses:*"
+      Resources:
+        - "*"
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
