@@ -8,7 +8,7 @@ export const sendReminderDaily: Handler<ScheduledEvent> = (event: ScheduledEvent
   const from = `${fromFullName} <ronnie.nyaga@andela.com>`;
   const template = 'daily-reminder';
 
-  sendEmail(callback, to, from, 'Woof Garden Reminder', template, null, from).then((result) => {
+  sendEmail(callback, to, from, 'Woof Garden Reminder', template, {}, from).then((result) => {
     console.info(`SES Message ID: ${result.MessageId}`);
   })
 };

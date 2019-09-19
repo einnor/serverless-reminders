@@ -1,7 +1,7 @@
 import { SendEmailRequest } from 'aws-sdk/clients/ses';
 import * as path from 'path';
 import * as AWS from 'aws-sdk';
-import * as Email from 'email-templates';
+import Email from 'email-templates';
 import { Callback } from 'aws-lambda';
 
 // Set the AWS region
@@ -16,7 +16,7 @@ export function sendEmail(
   from: string,
   subject: string,
   template: string,
-  data?: object | null,
+  data?: object,
   replyTo?: string,
   bcc?: string
 ) {
@@ -34,7 +34,7 @@ export function sendEmail(
     juiceResources: {
       preserveImportant: true,
       webResources: {
-        relativeTo: path.resolve('templates/css'),
+        relativeTo: path.resolve('templates'),
       },
     },
     transport: {
@@ -45,7 +45,7 @@ export function sendEmail(
   const toSummary = typeof to === 'string' ? to : to.join(',');
 
   console.log(`Begin rendering email template '${template}' for ${toSummary}`);
-  return email.render(`${template}/index`, data).then((output) => {
+  return email.render(`${template}/text`, data).then((output) => {
     console.log(`Finished rendering email template '${template}' for ${toSummary}`);
 
     // Create the BCC list
@@ -76,11 +76,6 @@ export function sendEmail(
     // Send the message and return a Promise
     console.log(`Invoking SES.sendEmail for ${toSummary}...`);
 
-    return SES.sendEmail(sesParams, (err, data) => {
-       // an error occurred
-       if (err) console.log(err, err.stack);
-       // successful response
-       else callback(null, data);
-    });
+    return SES.sendEmail(sesParams).promise();
   });
 }
