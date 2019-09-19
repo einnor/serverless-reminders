@@ -45,7 +45,7 @@ export function sendEmail(
   const toSummary = typeof to === 'string' ? to : to.join(',');
 
   console.log(`Begin rendering email template '${template}' for ${toSummary}`);
-  return email.render(`${template}/text`, data).then((output) => {
+  return email.render(`${template}/html`, data).then((output) => {
     console.log(`Finished rendering email template '${template}' for ${toSummary}`);
 
     // Create the BCC list
