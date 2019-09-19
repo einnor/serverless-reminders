@@ -1,0 +1,35 @@
+{
+  "name": "serverless-reminders",
+  "version": "1.0.0",
+  "description": "An AWS Cloudwatch Event using cron syntax that triggers an SES email reminder",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "deploy": "npm run build && serverless deploy",
+    "send-daily-reminder": "serverless invoke --function dailyReminder --log",
+    "send-weekend-reminder": "serverless invoke --function weekendReminder --log"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/einnor/serverless-reminders.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/einnor/serverless-reminders/issues"
+  },
+  "homepage": "https://github.com/einnor/serverless-reminders#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.31",
+    "@types/node": "^12.7.5",
+    "ts-loader": "^6.1.0",
+    "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "aws-sdk": "^2.531.0",
+    "email-templates": "^6.0.2"
+  }
+}

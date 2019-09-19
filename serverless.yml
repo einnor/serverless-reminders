@@ -65,11 +65,11 @@ provider:
 # Functions
 functions:
   dailyReminder:
-    handler: handler.sendReminderDaily
+    handler: dist/handler.sendReminderDaily
     events:
       - schedule: rate(1 day)
   weekendReminder:
-    handler: handler.sendReminderWeekend
+    handler: dist/handler.sendReminderWeekend
     events:
       - schedule: cron(30 22 ? * SUN,SAT *)
 #   hello:
