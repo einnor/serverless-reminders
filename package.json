@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
     "aws-sdk": "^2.531.0",
-    "email-templates": "^6.0.2",
+    "email-templates": "^8.0.4",
     "pug": "^2.0.4"
   }
 }
