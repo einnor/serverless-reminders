@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/einnor/serverless-reminders#readme",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.31",
+    "@types/aws-lambda": "^8.10.75",
     "@types/node": "^12.7.5",
     "ts-loader": "^6.1.0",
     "typescript": "^3.6.3"
