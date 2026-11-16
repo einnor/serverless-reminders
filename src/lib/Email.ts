@@ -1,81 +1,34 @@
-import { SendEmailRequest } from 'aws-sdk/clients/ses';
-import * as path from 'path';
-import * as AWS from 'aws-sdk';
-import Email from 'email-templates';
-import { Callback } from 'aws-lambda';
+import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses';
+import path from 'node:path';
+import fs from 'node:fs';
+import pug from 'pug';
+import juice from 'juice';
 
-// Set the AWS region
-AWS.config.update({ region: 'eu-west-1' });
+export type ReminderTemplate = 'daily-reminder' | 'weekend-reminder';
+type MailClient = { send(command: SendEmailCommand): Promise<{ MessageId?: string }> };
 
-// Initalize the SES client
-const SES = new AWS.SES();
+export function renderEmail(template: ReminderTemplate): string {
+  const root = path.resolve(__dirname, '../../templates');
+  const html = pug.renderFile(path.join(root, 'email', template, 'html.pug'));
+  const css = fs.readFileSync(path.join(root, 'css', `${template}.css`), 'utf8');
+  return juice(html, { extraCss: css, removeStyleTags: true });
+}
 
-export function sendEmail(
-  callback: Callback,
-  to: string | string[],
-  from: string,
-  subject: string,
-  template: string,
-  data?: object,
-  replyTo?: string,
-  bcc?: string
-) {
-  const email = new Email({
-    preview: false,
-    views: {
-      root: path.resolve('templates/email'),
+export async function sendEmail(
+  template: ReminderTemplate,
+  client: MailClient = new SESClient({}),
+): Promise<{ MessageId?: string }> {
+  const from = process.env.REMINDER_FROM?.trim();
+  const to = process.env.REMINDER_TO?.split(',').map(value => value.trim()).filter(Boolean);
+  if (!from || !to?.length) throw new Error('REMINDER_FROM and REMINDER_TO are required.');
+
+  const input: SendEmailCommandInput = {
+    Source: from,
+    Destination: { ToAddresses: to },
+    Message: {
+      Subject: { Charset: 'UTF-8', Data: template === 'daily-reminder' ? 'Daily reminder' : 'Weekend reminder' },
+      Body: { Html: { Charset: 'UTF-8', Data: renderEmail(template) } },
     },
-    message: {
-      from: from,
-      bcc: bcc,
-    },
-    send: false,
-    juice: true,
-    juiceResources: {
-      preserveImportant: true,
-      webResources: {
-        relativeTo: path.resolve('templates'),
-      },
-    },
-    transport: {
-      jsonTransport: true,
-    },
-  });
-
-  const toSummary = typeof to === 'string' ? to : to.join(',');
-
-  console.log(`Begin rendering email template '${template}' for ${toSummary}`);
-  return email.render(`${template}/html`, data).then((output) => {
-    console.log(`Finished rendering email template '${template}' for ${toSummary}`);
-
-    // Create the BCC list
-    const bccList: string[] = typeof bcc === 'string' ? bcc.split(',').map((x) => x.trim()) : [];
-
-    // Setup the SES Message Params
-    const sesParams: SendEmailRequest = {
-      Destination: {
-        BccAddresses: bccList,
-        ToAddresses: Array.isArray(to) ? to : [to],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: output,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: subject,
-        },
-      },
-      Source: from,
-      ReplyToAddresses: replyTo ? [replyTo] : undefined,
-    };
-
-    // Send the message and return a Promise
-    console.log(`Invoking SES.sendEmail for ${toSummary}...`);
-
-    return SES.sendEmail(sesParams).promise();
-  });
+  };
+  return client.send(new SendEmailCommand(input));
 }

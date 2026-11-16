@@ -1,36 +1,26 @@
 {
   "name": "serverless-reminders",
-  "version": "1.0.0",
-  "description": "An AWS Cloudwatch Event using cron syntax that triggers an SES email reminder",
-  "main": "handler.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Scheduled Lambda email reminders with SES, typed templates and offline previews.",
+  "engines": { "node": ">=24" },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "deploy": "npm run build && serverless deploy",
-    "send-daily-reminder": "serverless invoke local --function dailyReminder --log",
-    "send-weekend-reminder": "serverless invoke local --function weekendReminder --log"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/einnor/serverless-reminders.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/einnor/serverless-reminders/issues"
-  },
-  "homepage": "https://github.com/einnor/serverless-reminders#readme",
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.31",
-    "@types/node": "^12.7.5",
-    "ts-loader": "^6.1.0",
-    "typescript": "^3.6.3"
+    "test": "npm run build && node --test test/*.test.cjs",
+    "preview": "npm run build && node scripts/preview.cjs",
+    "package": "npm run build && serverless package",
+    "deploy": "npm run build && serverless deploy"
   },
   "dependencies": {
-    "@types/aws-sdk": "^2.7.0",
-    "aws-sdk": "^2.531.0",
-    "email-templates": "^6.0.2",
-    "pug": "^2.0.4"
+    "@aws-sdk/client-ses": "^3.900.0",
+    "juice": "^11.0.3",
+    "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.159",
+    "@types/node": "^24.10.0",
+    "@types/pug": "^2.0.10",
+    "serverless": "^4.25.0",
+    "typescript": "^5.9.3"
   }
 }

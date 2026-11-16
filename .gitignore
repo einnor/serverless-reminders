@@ -6,3 +6,8 @@ jspm_packages
 .serverless
 
 dist/
+.env
+.env.*
+!.env.example
+docs/preview/
+.DS_Store
